@@ -1,0 +1,129 @@
+{
+  "editor.fontFamily": "Iosevka SS04,Geist Mono, Envy Code R Italic, JetBrains Mono, Hack, Menlo, Monaco, Fira Code, 'Consolas', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 15,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    // "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "editor.formatOnSave": true,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.eol": "\n",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.startupEditor": "none",
+  "cSpell.userWords": [
+    "accountid",
+    "accountnumber",
+    "amazoninventory",
+    "antd",
+    "behaviour",
+    "configurator",
+    "DATATABLE",
+    "datatables",
+    "dealerprice",
+    "Disp",
+    "Displ",
+    "eastinventory",
+    "fastify",
+    "helmethouse",
+    "hutk",
+    "Illia",
+    "masterdata",
+    "milwaukeetool",
+    "odata",
+    "ordernumber",
+    "ordertype",
+    "overriddencreatedon",
+    "ownerid",
+    "paymentterms",
+    "primarywarehouse",
+    "Privat",
+    "productdata",
+    "producteta",
+    "referencenumber",
+    "requestedby",
+    "Rudyi",
+    "salesorderdetails",
+    "salesorderid",
+    "sendform",
+    "skuid",
+    "skus",
+    "systemusers",
+    "THREEKIT",
+    "totallineitemamount",
+    "Vtex",
+    "westinventory"
+  ],
+  "editor.inlineSuggest.enabled": true,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+  "gitlens.currentLine.dateFormat": "",
+  "tabnine.experimentalAutoImports": true,
+  "html.format.wrapLineLength": 80,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnType": true
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "git.ignoreRebaseWarning": true,
+  "json.schemas": [],
+  "editor.guides.bracketPairs": "active",
+  "editor.bracketPairColorization.enabled": true,
+  "javascript.validate.enable": false,
+  "errorLens.enabled": true,
+  "errorLens.enabledDiagnosticLevels": ["error", "info", "warning"],
+  "editor.cursorSmoothCaretAnimation": "on",
+  "aws.telemetry": false,
+  "editor.indentSize": "tabSize",
+  "turboConsoleLog.logType": "log",
+  "terminal.integrated.env.windows": {},
+  "git.autofetch": true,
+  "console-ninja.darkTheme.error.decorationAttachmentRenderOptions": {
+    "border": null,
+    "borderColor": null,
+    "fontStyle": null,
+    "fontWeight": null,
+    "textDecoration": null,
+    "color": "#fe536a",
+    "backgroundColor": null,
+    "margin": "1em",
+    "width": null,
+    "height": null
+  },
+  "console-ninja.featureSet": "Community",
+  "githubPullRequests.pullBranch": "never",
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "workbench.editor.enablePreview": false,
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "on",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "workbench.colorTheme": "Monokai Pro (Filter Octagon)",
+  "window.zoomLevel": 1,
+  "workbench.activityBar.location": "top",
+  "workbench.sideBar.location": "right",
+  "liveServer.settings.ChromeDebuggingAttachment": false,
+  "liveServer.settings.port": 9002,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "debug.disassemblyView.showSourceCode": false
+}
