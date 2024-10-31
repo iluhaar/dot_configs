@@ -1,0 +1,63 @@
+# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\montys.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
+
+$work= @{
+    dir = 'C:\Users\iluha\work\zaelab'
+    threekit = 'C:\Users\iluha\work\zaelab\threekit'
+    milgrad = 'C:\Users\iluha\work\zaelab\threekit\milgard-api'
+    # vtex = 'C:\Users\iluha\work\zaelab\vtex'
+}
+
+$temp = 'C:\Users\iluha\temp'
+
+$note_keeper = 'C:\Users\iluha\temp\note-keeper-v2'
+
+#Alias
+Set-Alias vim nvim
+Set-Alias ll ls
+Set-Alias grep findstr
+Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
+Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
+# Set-Alias vtx vtex
+# Set-Alias startWork "cd '%LOCALAPPDATA%\slack'"
+# Set-Alias startWork "cd C:\Users\$env:USERNAME\AppData\Local\slack"
+
+function Get-WifiPassword {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$SSID
+    )
+
+    $profiles = netsh wlan show profiles
+    $profileNames = $profiles | Select-String "All User Profile" | ForEach-Object { $_.ToString().Split(":")[1].Trim() }
+
+    if ($profileNames -contains $SSID) {
+        $password = (netsh wlan show profile name="$SSID" key=clear) -match "Key Content\s+:\s+(.*)" | Out-Null
+        Write-Output "Wi-Fi SSID: $SSID"
+        Write-Output "Password: $($Matches[1])"
+    }
+    else {
+        Write-Output "Wi-Fi SSID '$SSID' not found."
+    }
+}
+
+function convert2gif {
+    param (
+        [string]$inputFileName
+    )
+
+    # Check if the input file exists
+    if (!(Test-Path $inputFileName)) {
+        Write-Output "File $inputFileName not found."
+        return
+    }
+
+    # Define the output GIF file name
+    $outputFileName = [System.IO.Path]::ChangeExtension($inputFileName, "gif")
+
+    # Run the FFmpeg command to convert the MP4 to GIF
+    ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" $outputFileName
+
+    Write-Output "Conversion complete: $outputFileName"
+}
