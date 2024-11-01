@@ -1,16 +1,12 @@
-# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\montys.omp.json" | Invoke-Expression
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
 
 $work= @{
     dir = 'C:\Users\iluha\work\zaelab'
     threekit = 'C:\Users\iluha\work\zaelab\threekit'
-    milgrad = 'C:\Users\iluha\work\zaelab\threekit\milgard-api'
-    # vtex = 'C:\Users\iluha\work\zaelab\vtex'
 }
 
 $temp = 'C:\Users\iluha\temp'
 
-$note_keeper = 'C:\Users\iluha\temp\note-keeper-v2'
 
 #Alias
 Set-Alias vim nvim
@@ -18,9 +14,6 @@ Set-Alias ll ls
 Set-Alias grep findstr
 Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
-# Set-Alias vtx vtex
-# Set-Alias startWork "cd '%LOCALAPPDATA%\slack'"
-# Set-Alias startWork "cd C:\Users\$env:USERNAME\AppData\Local\slack"
 
 function Get-WifiPassword {
     [CmdletBinding()]
@@ -61,3 +54,8 @@ function convert2gif {
 
     Write-Output "Conversion complete: $outputFileName"
 }
+
+function work {
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit
+}
+
