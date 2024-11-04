@@ -1,4 +1,4 @@
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\zash.omp.json" | Invoke-Expression
 
 $work= @{
     dir = 'C:\Users\iluha\work\zaelab'
@@ -56,6 +56,6 @@ function convert2gif {
 }
 
 function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"
 }
 
