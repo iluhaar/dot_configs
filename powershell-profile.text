@@ -1,3 +1,4 @@
+# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\zash.omp.json" | Invoke-Expression
 
 $work= @{
@@ -59,3 +60,24 @@ function work {
     Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"
 }
 
+
+function convertWebp2png {
+    param (
+        [string]$inputFileName
+    )
+
+    # Check if the input file exists
+    if (!(Test-Path $inputFileName)) {
+        Write-Output "File $inputFileName not found."
+        return
+    }
+
+    # Define the output GIF file name
+    $outputFileName = [System.IO.Path]::ChangeExtension($inputFileName, "png")
+
+    # Run FFmpeg command to convert the Webp to PNG
+
+    ffmpeg -i $inputFileName $outputFileName
+
+    Write-Output "Conversion complete: $outputFileName"
+}
