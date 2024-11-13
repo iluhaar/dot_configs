@@ -57,9 +57,8 @@ function convert2gif {
 }
 
 function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"
 }
-
 
 function convertWebp2png {
     param (
@@ -81,3 +80,4 @@ function convertWebp2png {
 
     Write-Output "Conversion complete: $outputFileName"
 }
+
