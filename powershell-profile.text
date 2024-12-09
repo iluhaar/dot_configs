@@ -16,24 +16,8 @@ Set-Alias grep findstr
 Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 
-function Get-WifiPassword {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string]$SSID
-    )
-
-    $profiles = netsh wlan show profiles
-    $profileNames = $profiles | Select-String "All User Profile" | ForEach-Object { $_.ToString().Split(":")[1].Trim() }
-
-    if ($profileNames -contains $SSID) {
-        $password = (netsh wlan show profile name="$SSID" key=clear) -match "Key Content\s+:\s+(.*)" | Out-Null
-        Write-Output "Wi-Fi SSID: $SSID"
-        Write-Output "Password: $($Matches[1])"
-    }
-    else {
-        Write-Output "Wi-Fi SSID '$SSID' not found."
-    }
+function work {
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"
 }
 
 function convert2gif {
@@ -56,10 +40,6 @@ function convert2gif {
     Write-Output "Conversion complete: $outputFileName"
 }
 
-function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"
-}
-
 function convertWebp2png {
     param (
         [string]$inputFileName
@@ -79,5 +59,15 @@ function convertWebp2png {
     ffmpeg -i $inputFileName $outputFileName
 
     Write-Output "Conversion complete: $outputFileName"
+}
+
+function phelp {
+    Write-Host "Custom commands:"
+    Write-Host "-----------------------------"
+    Write-Host "convert2gif: accepts file name, or full path to the file and converts mp4 to gif"
+    Write-Host "-----------------------------"
+    Write-Host "convertWebp2png: accepts file name, or full path to the file and converts webp to png"
+    Write-Host "-----------------------------"
+    Write-Host "work: opens slack, 3kit directory, run x-mouse"
 }
 
