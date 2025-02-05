@@ -17,12 +17,14 @@ Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 
 function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"; Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe"
 }
 
 function convert2gif {
     param (
-        [string]$inputFileName
+        [string]$inputFileName,
+        [Alias('c')]
+        [switch]$copyToClipboard
     )
 
     # Check if the input file exists
@@ -38,6 +40,12 @@ function convert2gif {
     ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" $outputFileName
 
     Write-Output "Conversion complete: $outputFileName"
+
+    # Copy to clipboard if the flag is set
+    if ($copyToClipboard) {
+        Get-Item $outputFileName | Set-Clipboard
+        Write-Output "GIF $outputFileName copied to clipboard"
+    }
 }
 
 function convertWebp2png {
