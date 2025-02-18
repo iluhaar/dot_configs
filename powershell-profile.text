@@ -3,7 +3,9 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\zash.omp.json" | Invoke-Exp
 
 $work= @{
     dir = 'C:\Users\iluha\work\zaelab'
-    threekit = 'C:\Users\iluha\work\zaelab\threekit'
+    # temporary
+    threekit = 'C:\Users\iluha\work\zaelab\composable'
+    composable = 'C:\Users\iluha\work\zaelab\composable'
 }
 
 $temp = 'C:\Users\iluha\temp'
@@ -17,7 +19,7 @@ Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 
 function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.threekit;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"; Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe"
+    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.composable;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"; Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe"
 }
 
 function convert2gif {
@@ -78,4 +80,3 @@ function phelp {
     Write-Host "-----------------------------"
     Write-Host "work: opens slack, 3kit directory, run x-mouse"
 }
-
