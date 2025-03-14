@@ -79,4 +79,53 @@ function phelp {
     Write-Host "convertWebp2png: accepts file name, or full path to the file and converts webp to png"
     Write-Host "-----------------------------"
     Write-Host "work: opens slack, 3kit directory, run x-mouse"
+    Write-Host "-----------------------------"
+    Write-Host "kill3000: kills process on port 3000"
+    Write-Host "-----------------------------"
+    Write-Host "GetBranchesDiff: receives two branch names ex: GetBranchesDiff main dev"
+}
+
+function kill3000 {
+    $processInfo = netstat -ano | findstr ":3000"
+    if ($processInfo) {
+        $pid = ($processInfo -split ' ')[-1]
+        Write-Host "Killing process with PID: $pid"
+        taskkill /PID $pid /F
+    } else {
+        Write-Host "No process found using port 3000"
+    }
+}
+
+function GetBranchesDiff { 
+    param(
+        [string]$firstBranch,
+        [string]$secondBranch
+    )
+
+    # Check if parameters were provided
+    if ([string]::IsNullOrEmpty($firstBranch)) {
+        Write-Output "First branch parameter is required."
+        return
+    }
+    
+    if ([string]::IsNullOrEmpty($secondBranch)) {
+        Write-Output "Second branch parameter is required."
+        return
+    }
+
+    # Check if branches exist in Git
+    $firstBranchExists = git rev-parse --verify --quiet "origin/$firstBranch"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "Branch '$firstBranch' not found in remote 'origin'."
+        return
+    }
+    
+    $secondBranchExists = git rev-parse --verify --quiet "origin/$secondBranch"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "Branch '$secondBranch' not found in remote 'origin'."
+        return
+    }
+
+    # Show diff between branches
+    git diff --stat "origin/$firstBranch" "origin/$secondBranch"
 }
