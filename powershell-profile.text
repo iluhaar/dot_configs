@@ -41,18 +41,28 @@ function convert2gif {
     # Define the output GIF file name
     $outputFileName = [System.IO.Path]::ChangeExtension($inputFileName, "gif")
 
-    # Run the FFmpeg command to convert the MP4 to GIF
-    # Create gif directory if it doesn't exist
+    # Get today's date in yyyy-MM-dd format
+    $todayFolder = Get-Date -Format "yyyy-MM-dd"
+    
+    # Create base gif directory if it doesn't exist
     if (!(Test-Path "./gif")) {
         New-Item -ItemType Directory -Path "./gif" -Force
     }
-    ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" "./gif/$outputFileName"
 
-    Write-Output "Conversion complete: $outputFileName"
+    # Create today's date folder if it doesn't exist
+    $dateFolder = "$todayFolder"
+    if (!(Test-Path $dateFolder)) {
+        New-Item -ItemType Directory -Path $dateFolder -Force
+    }
+
+    # Run the FFmpeg command to convert the MP4 to GIF
+    ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" "./gif/$dateFolder/$outputFileName"
+
+    Write-Output "Conversion complete: $dateFolder/$outputFileName"
 
     # Copy to clipboard if the flag is set
     if ($copyToClipboard) {
-        Get-Item $outputFileName | Set-Clipboard
+        Get-Item "$dateFolder/$outputFileName" | Set-Clipboard
         Write-Output "GIF $outputFileName copied to clipboard"
     }
 }
@@ -207,5 +217,114 @@ function Copy-CurrentPath {
     }
     catch {
         Write-Error "Failed to copy path to clipboard: $($_.Exception.Message)"
+    }
+}
+
+function Organize-GifFilesByDate {
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='Medium')]
+    param(
+        [Parameter(Mandatory=$false,
+                   Position=0,
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true)]
+        [string]$Path = (Get-Location).Path,
+
+        [Parameter(Mandatory=$false)]
+        [string]$FileFilter = "*.gif"
+    )
+
+    Process {
+        Write-Host "Starting file organization in '$Path' for files matching '$FileFilter'..."
+
+        # Get all files matching the filter in the specified path
+        $filesToProcess = Get-ChildItem -Path $Path -Filter $FileFilter -File
+
+        if (-not $filesToProcess) {
+            Write-Warning "No files matching '$FileFilter' found in '$Path'. Exiting."
+            return
+        }
+
+        foreach ($file in $filesToProcess) {
+            # Extract the base name of the file (without extension)
+            $fileNameWithoutExtension = $file.BaseName
+
+            # Attempt to extract the date part from the filename
+            # It tries to match "YYYY-MM-DD" followed by a space or underscore
+            $dateMatch = $fileNameWithoutExtension | Select-String -Pattern "(\d{4}-\d{2}-\d{2})[ _]"
+
+            if ($dateMatch) {
+                # Get the matched date string
+                $datePart = $dateMatch.Matches[0].Groups[1].Value
+
+                # Define the full path for the target directory
+                $targetDirectory = Join-Path -Path $Path -ChildPath $datePart
+
+                # Check if the target directory exists and create if not, respecting WhatIf/Confirm
+                if (-not (Test-Path -Path $targetDirectory -PathType Container)) {
+                    if ($PSCmdlet.ShouldProcess("Create directory '$targetDirectory'", "Creating new directory for date-matched files")) {
+                        Write-Host "Creating new directory: $targetDirectory"
+                        try {
+                            New-Item -ItemType Directory -Path $targetDirectory -ErrorAction Stop | Out-Null
+                        } catch {
+                            Write-Error "Failed to create directory '$targetDirectory': $($_.Exception.Message)"
+                            continue # Skip to the next file if directory creation fails
+                        }
+                    } else {
+                        Write-Verbose "Operation cancelled: Create directory '$targetDirectory'"
+                        continue # Skip to the next file if WhatIf/Confirm prevents creation
+                    }
+                }
+
+                # Define the full path for the destination file
+                $destinationPath = Join-Path -Path $targetDirectory -ChildPath $file.Name
+
+                # Move the file, respecting WhatIf/Confirm
+                if ($PSCmdlet.ShouldProcess("Move '$($file.Name)' to '$($targetDirectory)'", "Moving date-matched file")) {
+                    Write-Host "Moving '$($file.Name)' to '$($targetDirectory)'"
+                    try {
+                        Move-Item -Path $file.FullName -Destination $destinationPath -Force -ErrorAction Stop
+                    } catch {
+                        Write-Error "Failed to move '$($file.Name)': $($_.Exception.Message)"
+                    }
+                } else {
+                    Write-Verbose "Operation cancelled: Move file '$($file.Name)'"
+                }
+            } else {
+                # If date format is not found, move to an "other" folder
+                $otherDirectory = Join-Path -Path $Path -ChildPath "other"
+
+                # Check if the "other" directory exists and create if not
+                if (-not (Test-Path -Path $otherDirectory -PathType Container)) {
+                    if ($PSCmdlet.ShouldProcess("Create directory '$otherDirectory'", "Creating 'other' directory for non-date-matched files")) {
+                        Write-Host "Creating new directory: $otherDirectory"
+                        try {
+                            New-Item -ItemType Directory -Path $otherDirectory -ErrorAction Stop | Out-Null
+                        } catch {
+                            Write-Error "Failed to create directory '$otherDirectory': $($_.Exception.Message)"
+                            continue # Skip to the next file if directory creation fails
+                        }
+                    } else {
+                        Write-Verbose "Operation cancelled: Create directory '$otherDirectory'"
+                        continue # Skip to the next file if WhatIf/Confirm prevents creation
+                    }
+                }
+
+                # Define the full path for the destination file in the 'other' directory
+                $destinationPath = Join-Path -Path $otherDirectory -ChildPath $file.Name
+
+                # Move the file to the 'other' folder
+                if ($PSCmdlet.ShouldProcess("Move '$($file.Name)' to '$($otherDirectory)'", "Moving non-date-matched file")) {
+                    Write-Warning "Could not extract date from filename '$($file.Name)'. Moving to '$($otherDirectory)'."
+                    try {
+                        Move-Item -Path $file.FullName -Destination $destinationPath -Force -ErrorAction Stop
+                    } catch {
+                        Write-Error "Failed to move '$($file.Name)' to 'other' directory: $($_.Exception.Message)"
+                    }
+                } else {
+                    Write-Verbose "Operation cancelled: Move file '$($file.Name)' to 'other' directory"
+                }
+            }
+        }
+        Write-Host "File organization complete."
     }
 }
