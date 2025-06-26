@@ -8,7 +8,7 @@ $work= @{
     composable = 'C:\Users\iluha\work\zaelab\composable'
 }
 
-$temp = 'C:\Users\iluha\temp'
+$pers = 'C:\Users\iluha\personal'
 
 
 #Alias
@@ -17,6 +17,9 @@ Set-Alias ll ls
 Set-Alias grep findstr
 Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
+Set-Alias lg lazygit
+Set-Alias gt git
+Set-Alias -Name ccp -Value Copy-CurrentPath -Description "Alias for Copy-CurrentPath"
 
 function work {
     Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.composable;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"; Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe"
@@ -39,7 +42,11 @@ function convert2gif {
     $outputFileName = [System.IO.Path]::ChangeExtension($inputFileName, "gif")
 
     # Run the FFmpeg command to convert the MP4 to GIF
-    ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" $outputFileName
+    # Create gif directory if it doesn't exist
+    if (!(Test-Path "./gif")) {
+        New-Item -ItemType Directory -Path "./gif" -Force
+    }
+    ffmpeg -i $inputFileName -vf "fps=10,scale=1200:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" "./gif/$outputFileName"
 
     Write-Output "Conversion complete: $outputFileName"
 
@@ -83,6 +90,8 @@ function phelp {
     Write-Host "kill3000: kills process on port 3000"
     Write-Host "-----------------------------"
     Write-Host "GetBranchesDiff: receives two branch names ex: GetBranchesDiff main dev"
+    Write-Host "-----------------------------"
+    Write-Host "ccp: copies active path" 
 }
 
 function kill3000 {
@@ -128,4 +137,75 @@ function GetBranchesDiff {
 
     # Show diff between branches
     git diff --stat "origin/$firstBranch" "origin/$secondBranch"
+}
+
+function Find-LargestFiles {
+    param (
+        [Parameter(Mandatory=$false)]
+        [string]$Path = ".",
+        
+        [Parameter(Mandatory=$false)]
+        [string]$FilePattern = "*.tsx",
+        
+        [Parameter(Mandatory=$false)]
+        [int]$Top = 10
+    )
+
+    Write-Host "Searching for $FilePattern files in $Path..." -ForegroundColor Cyan
+    
+    $files = Get-ChildItem -Path $Path -Recurse -File -Filter $FilePattern -ErrorAction SilentlyContinue
+    
+    if ($files.Count -eq 0) {
+        Write-Host "No matching files found." -ForegroundColor Yellow
+        return
+    }
+    
+    Write-Host "Found $($files.Count) matching files. Counting lines..." -ForegroundColor Cyan
+    
+    $results = foreach ($file in $files) {
+        try {
+            $lineCount = (Get-Content $file.FullName -ErrorAction Stop | Measure-Object -Line).Lines
+            [PSCustomObject]@{
+                FileName = $file.FullName
+                LineCount = $lineCount
+            }
+        }
+        catch {
+            Write-Host "Error processing $($file.FullName): $_" -ForegroundColor Red
+        }
+    }
+    
+    $sortedResults = $results | Sort-Object LineCount -Descending | Select-Object -First $Top
+    
+    Write-Host "Top $Top files by line count:" -ForegroundColor Green
+    $sortedResults | Format-Table -AutoSize
+}
+
+function Copy-CurrentPath {
+    <#
+    .SYNOPSIS
+        Copies the current working directory path to the Windows clipboard.
+    .DESCRIPTION
+        This function retrieves the full path of the current directory
+        and sends it directly to the system clipboard using the 'clip' utility.
+        This allows for quick pasting of the path into other applications.
+    .EXAMPLE
+        Copy-CurrentPath
+        # Copies "C:\Users\YourUser\Documents" (or your current path) to clipboard.
+    #>
+    [CmdletBinding()]
+    param()
+
+    try {
+        # Get the current location object and extract its Path property
+        $currentPath = (Get-Location).Path
+
+        # Pipe the path string to the 'clip' utility, which puts it on the clipboard
+        $currentPath | clip
+
+        Write-Host "Current path '$currentPath' copied to clipboard." -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to copy path to clipboard: $($_.Exception.Message)"
+    }
 }
