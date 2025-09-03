@@ -9,11 +9,12 @@
         sort = -committerdate
 
 [alias]
-        new = "!f() { \\\n  if [ \"$1\" = \"-c\" ]; then \\\n    if [ -z \"$2\" ]; then \\\n      echo \"Usage: git new -c <ticket-number>\"; \\\n      return 1; \\\n    fi; \\\n    folder=$(basename \"$PWD\"); \\\n    branch=\"${folder}-$2\"; \\\n  else \\\n    if [ -z \"$1\" ]; then \\\n      echo \"Usage: git new [-c] <branch-name-or-ticket>\"; \\\n      return 1; \\\n    fi; \\\n    branch=\"$1\"; \\\n  fi; \\\n  git checkout -b \"$branch\"; \\\n}; f"
-        f-diff = git diff --stat
-        st = status
-        contributors = shortlog -sne --group=author --group=trailer:co-authored-by
-        upc = commit --amend --no-edit
+	new = "!f() { \\\n  if [ \"$1\" = \"-c\" ]; then \\\n    if [ -z \"$2\" ]; then \\\n      echo \"Usage: git new -c <ticket-number>\"; \\\n      return 1; \\\n    fi; \\\n    folder=$(basename \"$PWD\"); \\\n    branch=\"${folder}-$2\"; \\\n  else \\\n    if [ -z \"$1\" ]; then \\\n      echo \"Usage: git new [-c] <branch-name-or-ticket>\"; \\\n      return 1; \\\n    fi; \\\n    branch=\"$1\"; \\\n  fi; \\\n  git checkout -b \"$branch\"; \\\n}; f"
+	f-diff = git diff --stat
+	st = status
+	contributors = shortlog -sne --group=author --group=trailer:co-authored-by
+	upc = commit --amend --no-edit
+	b = switch -
 [blame]
         coloring = repeatedLines
 
