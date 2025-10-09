@@ -1,17 +1,6 @@
 # oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\montys.omp.json" | Invoke-Expression
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
 
-$work= @{
-    dir = 'C:\Users\iluha\work\zaelab'
-    threekit = 'C:\Users\iluha\work\zaelab\threekit'
-    milgrad = 'C:\Users\iluha\work\zaelab\threekit\milgard-api'
-    # vtex = 'C:\Users\iluha\work\zaelab\vtex'
-}
-
-$temp = 'C:\Users\iluha\temp'
-
-$note_keeper = 'C:\Users\iluha\temp\note-keeper-v2'
-
 #Alias
 Set-Alias vim nvim
 Set-Alias ll ls
