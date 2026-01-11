@@ -1,15 +1,7 @@
 # oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\zash.omp.json" | Invoke-Expression
 
-$work= @{
-    dir = 'C:\Users\iluha\work\zaelab'
-    # temporary
-    threekit = 'C:\Users\iluha\work\zaelab\composable'
-    composable = 'C:\Users\iluha\work\zaelab\composable'
-}
-
 $pers = 'C:\Users\iluha\personal'
-
 
 #Alias
 Set-Alias vim nvim
@@ -20,10 +12,6 @@ Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 Set-Alias lg lazygit
 Set-Alias gt git
 Set-Alias -Name ccp -Value Copy-CurrentPath -Description "Alias for Copy-CurrentPath"
-
-function work {
-    Start-Process "$env:LOCALAPPDATA\slack\slack.exe"; cd $work.composable;  Start-Process "C:\Program Files\Highresolution Enterprises\X-Mouse Button Control\XMouseButtonControl.exe"; Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe"; Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe"
-}
 
 function convert2gif {
     param (
@@ -43,7 +31,7 @@ function convert2gif {
 
     # Get today's date in yyyy-MM-dd format
     $todayFolder = Get-Date -Format "yyyy-MM-dd"
-    
+
     # Create base gif directory if it doesn't exist
     if (!(Test-Path "./gif")) {
         New-Item -ItemType Directory -Path "./gif" -Force
@@ -101,7 +89,7 @@ function phelp {
     Write-Host "-----------------------------"
     Write-Host "GetBranchesDiff: receives two branch names ex: GetBranchesDiff main dev"
     Write-Host "-----------------------------"
-    Write-Host "ccp: copies active path" 
+    Write-Host "ccp: copies active path"
 }
 
 function kill3000 {
@@ -115,7 +103,7 @@ function kill3000 {
     }
 }
 
-function GetBranchesDiff { 
+function GetBranchesDiff {
     param(
         [string]$firstBranch,
         [string]$secondBranch
@@ -126,7 +114,7 @@ function GetBranchesDiff {
         Write-Output "First branch parameter is required."
         return
     }
-    
+
     if ([string]::IsNullOrEmpty($secondBranch)) {
         Write-Output "Second branch parameter is required."
         return
@@ -138,7 +126,7 @@ function GetBranchesDiff {
         Write-Output "Branch '$firstBranch' not found in remote 'origin'."
         return
     }
-    
+
     $secondBranchExists = git rev-parse --verify --quiet "origin/$secondBranch"
     if ($LASTEXITCODE -ne 0) {
         Write-Output "Branch '$secondBranch' not found in remote 'origin'."
@@ -153,25 +141,25 @@ function Find-LargestFiles {
     param (
         [Parameter(Mandatory=$false)]
         [string]$Path = ".",
-        
+
         [Parameter(Mandatory=$false)]
         [string]$FilePattern = "*.tsx",
-        
+
         [Parameter(Mandatory=$false)]
         [int]$Top = 10
     )
 
     Write-Host "Searching for $FilePattern files in $Path..." -ForegroundColor Cyan
-    
+
     $files = Get-ChildItem -Path $Path -Recurse -File -Filter $FilePattern -ErrorAction SilentlyContinue
-    
+
     if ($files.Count -eq 0) {
         Write-Host "No matching files found." -ForegroundColor Yellow
         return
     }
-    
+
     Write-Host "Found $($files.Count) matching files. Counting lines..." -ForegroundColor Cyan
-    
+
     $results = foreach ($file in $files) {
         try {
             $lineCount = (Get-Content $file.FullName -ErrorAction Stop | Measure-Object -Line).Lines
@@ -184,9 +172,9 @@ function Find-LargestFiles {
             Write-Host "Error processing $($file.FullName): $_" -ForegroundColor Red
         }
     }
-    
+
     $sortedResults = $results | Sort-Object LineCount -Descending | Select-Object -First $Top
-    
+
     Write-Host "Top $Top files by line count:" -ForegroundColor Green
     $sortedResults | Format-Table -AutoSize
 }
