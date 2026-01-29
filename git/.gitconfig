@@ -25,11 +25,5 @@
         useHttpPath = true
         credentialStore = secretservice
 
-[alias]
-	new = switch -c
-	f-diff = git diff --stat
-	st = status
-	contributors = shortlog -sne --group=author --group=trailer:co-authored-by
-
 [blame]
 	coloring = repeatedLines
