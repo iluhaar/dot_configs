@@ -1,0 +1,105 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "vim_mode": false,
+  "cli_default_open_behavior": "new_window",
+  "outline_panel": {
+    "dock": "left",
+  },
+  "collaboration_panel": {
+    "dock": "left",
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "context_servers": {
+    "chrome-devtools-mcp-zed": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "browser_url": null,
+        "ws_endpoint": null,
+        "ws_headers": null,
+        "auto_connect": null,
+        "channel": null,
+        "headless": null,
+        "isolated": null,
+        "user_data_dir": null,
+        "viewport": null,
+        "execule_path": null,
+        "chrome_arg": [],
+        "proxy_server": null,
+        "accept_insecure_certs": null,
+        "category_emulation": null,
+        "category_performance": null,
+        "category_network": null,
+        "log_file": null,
+        "extra_args": [],
+      },
+    },
+  },
+  "agent_servers": {
+    "cursor": {
+      "type": "registry",
+    },
+  },
+  "format_on_save": "on",
+  "prettier": {
+    "allowed": true,
+  },
+  "git_panel": {
+    "dock": "right",
+  },
+  "project_panel": {
+    "indent_size": 20.0,
+    "git_status": true,
+    "folder_icons": true,
+    "hide_gitignore": false,
+    "entry_spacing": "comfortable",
+    "dock": "right",
+  },
+  "multi_cursor_modifier": "alt",
+  "buffer_font_weight": 500.0,
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Ayu Dark",
+  },
+  "languages": {
+    "JavaScript": {
+      "formatter": "prettier",
+    },
+    "TypeScript": {
+      "formatter": "prettier",
+    },
+    "TSX": {
+      "formatter": "prettier",
+    },
+    "JSON": {
+      "formatter": "prettier",
+    },
+    "JSONC": {
+      "formatter": "prettier",
+    },
+    "CSS": {
+      "formatter": "prettier",
+    },
+  },
+  "tabs": {
+    "file_icons": true,
+    "show_diagnostics": "all",
+  },
+}
