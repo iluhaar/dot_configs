@@ -1,6 +1,3 @@
-$_profileStart = [System.Diagnostics.Stopwatch]::StartNew()
-
-$_t = [System.Diagnostics.Stopwatch]::StartNew()
 function global:prompt {
     $lastOk = $?
     $path = $PWD.Path -replace [regex]::Escape($HOME), '~'
@@ -13,9 +10,7 @@ function global:prompt {
     else         { Write-Host '❯' -ForegroundColor Red   -NoNewline }
     return ' '
 }
-Write-Host "  [profile] prompt: $($_t.ElapsedMilliseconds)ms"
 
-$_t = [System.Diagnostics.Stopwatch]::StartNew()
 $_zoxCache = "$env:USERPROFILE\.cache\zoxide_init.ps1"
 $_zoxExe = (Get-Command zoxide -ErrorAction SilentlyContinue).Source
 if (!$_zoxExe -or !(Test-Path $_zoxCache) -or (Get-Item $_zoxExe).LastWriteTime -gt (Get-Item $_zoxCache).LastWriteTime) {
@@ -23,16 +18,11 @@ if (!$_zoxExe -or !(Test-Path $_zoxCache) -or (Get-Item $_zoxExe).LastWriteTime 
     zoxide init powershell --cmd j | Out-File $_zoxCache -Encoding utf8
 }
 . $_zoxCache
-Write-Host "  [profile] zoxide: $($_t.ElapsedMilliseconds)ms"
 
-$_t = [System.Diagnostics.Stopwatch]::StartNew()
 Start-ThreadJob -ScriptBlock {
     $out = ssh-add -l 2>&1
     if ($LASTEXITCODE -eq 1) { ssh-add ~/.ssh/personal }
 } | Out-Null
-Write-Host "  [profile] ssh-add: $($_t.ElapsedMilliseconds)ms"
-
-Write-Host "  [profile] total: $($_profileStart.ElapsedMilliseconds)ms"
 
 #Alias
 Set-Alias vim nvim
