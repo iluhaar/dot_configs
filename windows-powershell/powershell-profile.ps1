@@ -1,7 +1,38 @@
-# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\tokyo.omp.json" | Invoke-Expression
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\zash.omp.json" | Invoke-Expression
+$_profileStart = [System.Diagnostics.Stopwatch]::StartNew()
 
-$pers = 'C:\Users\iluha\personal'
+$_t = [System.Diagnostics.Stopwatch]::StartNew()
+function global:prompt {
+    $lastOk = $?
+    $path = $PWD.Path -replace [regex]::Escape($HOME), '~'
+    $git  = git branch --show-current 2>$null
+
+    Write-Host $path -ForegroundColor Cyan -NoNewline
+    if ($git) { Write-Host "  $git" -ForegroundColor Yellow -NoNewline }
+    Write-Host ''
+    if ($lastOk) { Write-Host '❯' -ForegroundColor Green -NoNewline }
+    else         { Write-Host '❯' -ForegroundColor Red   -NoNewline }
+    return ' '
+}
+Write-Host "  [profile] prompt: $($_t.ElapsedMilliseconds)ms"
+
+$_t = [System.Diagnostics.Stopwatch]::StartNew()
+$_zoxCache = "$env:USERPROFILE\.cache\zoxide_init.ps1"
+$_zoxExe = (Get-Command zoxide -ErrorAction SilentlyContinue).Source
+if (!$_zoxExe -or !(Test-Path $_zoxCache) -or (Get-Item $_zoxExe).LastWriteTime -gt (Get-Item $_zoxCache).LastWriteTime) {
+    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.cache" | Out-Null
+    zoxide init powershell --cmd j | Out-File $_zoxCache -Encoding utf8
+}
+. $_zoxCache
+Write-Host "  [profile] zoxide: $($_t.ElapsedMilliseconds)ms"
+
+$_t = [System.Diagnostics.Stopwatch]::StartNew()
+Start-ThreadJob -ScriptBlock {
+    $out = ssh-add -l 2>&1
+    if ($LASTEXITCODE -eq 1) { ssh-add ~/.ssh/personal }
+} | Out-Null
+Write-Host "  [profile] ssh-add: $($_t.ElapsedMilliseconds)ms"
+
+Write-Host "  [profile] total: $($_profileStart.ElapsedMilliseconds)ms"
 
 #Alias
 Set-Alias vim nvim
@@ -9,9 +40,10 @@ Set-Alias ll ls
 Set-Alias grep findstr
 Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
 Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
-Set-Alias lg lazygit
+Set-Alias lz lazygit
 Set-Alias gt git
 Set-Alias -Name ccp -Value Copy-CurrentPath -Description "Alias for Copy-CurrentPath"
+Set-Alias cc claude
 
 function convert2gif {
     param (
@@ -314,5 +346,45 @@ function Organize-GifFilesByDate {
             }
         }
         Write-Host "File organization complete."
+    }
+}
+
+function MoveFolder {
+    param ()
+
+    $Source = Read-Host "Enter FULL path to SOURCE folder"
+    $Destination = Read-Host "Enter FULL path to DESTINATION folder"
+
+    if (-not (Test-Path $Source)) {
+        Write-Host "❌ Source path does not exist" -ForegroundColor Red
+        return
+    }
+
+    $Source = (Resolve-Path $Source).Path
+    $Destination = (Resolve-Path (Split-Path $Destination -Parent) -ErrorAction SilentlyContinue).Path + "\" + (Split-Path $Destination -Leaf)
+
+    Write-Host "`nMoving folder:"
+    Write-Host "FROM: $Source"
+    Write-Host "TO:   $Destination`n"
+
+    robocopy `
+        $Source `
+        $Destination `
+        /MOVE `
+        /E `
+        /MT:16 `
+        /R:3 `
+        /W:5 `
+        /XJ `
+        /COPY:DAT `
+        /DCOPY:DAT `
+        /NP `
+        /NFL `
+        /NDL
+
+    if ($LASTEXITCODE -ge 8) {
+        Write-Host "`n❌ Robocopy failed (exit code $LASTEXITCODE)" -ForegroundColor Red
+    } else {
+        Write-Host "`n✅ Move completed successfully" -ForegroundColor Green
     }
 }
