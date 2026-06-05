@@ -34,6 +34,7 @@ Set-Alias lz lazygit
 Set-Alias gt git
 Set-Alias -Name ccp -Value Copy-CurrentPath -Description "Alias for Copy-CurrentPath"
 Set-Alias cc claude
+Set-Alias oc opencode
 
 function convert2gif {
     param (
