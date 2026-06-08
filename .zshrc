@@ -4,6 +4,9 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=01;34:ow=01;34:st=01;34:ex=01;32'
 
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$(npm config get prefix)/bin:$PATH"
+
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
@@ -120,6 +123,31 @@ dev() {
   fi
 }
 
+install() {
+  if [ -f "pnpm-lock.yaml" ]; then
+    pnpm install "$@"
+  elif [ -f "yarn.lock" ]; then
+    yarn install "$@"
+  elif [ -f "package-lock.json" ]; then
+    npm install "$@"
+  else
+    echo "No lockfile found (pnpm, yarn, or npm)."
+    return 1
+  fi
+}
+
+build() {
+    if [ -f "pnpm-lock.yaml" ]; then
+        pnpm build "$@"
+    elif [ -f "yarn.lock" ]; then
+        yarn build "$@"
+    elif [ -f "package-lock.json" ]; then
+        npm run build "$@"
+    else
+        echo "No lockfile found (pnpm, yarn, or npm)."
+        return 1
+    fi
+}
 
 # === SSH Agent Setup ===
 # Start the SSH agent if it's not already running and add SSH keys
@@ -136,6 +164,9 @@ alias startVpn='sudo openvpn --config ~/Downloads/ilya.rudyi.ovpn'
 alias clearDocker='sudo docker system prune -a --volumes -f'
 alias ca='cursor-agent'
 alias lz='lazygit'
+alias oc='opencode'
+alias j='z'
+alias cc='claude'
 
 # bun completions
 [ -s "/home/illia/.bun/_bun" ] && source "/home/illia/.bun/_bun"
@@ -164,5 +195,52 @@ killPort() {
         echo "Usage: killPort <port>"
         return 1
     fi
-    kill $(sudo lsof -t -i:$port)
+    kill -9 $(lsof -t -i:$port)
+}
+
+# Update Cursor from the newest downloaded .deb (version-aware)
+update-cursor() {
+  local DEB_DIR="$HOME/Downloads"
+  local DEB_FILE
+
+  DEB_FILE=$(ls "$DEB_DIR"/cursor_*.deb 2>/dev/null | sort -V | tail -n 1)
+
+  if [[ -z "$DEB_FILE" ]]; then
+    echo "❌ No cursor-*.deb found in $DEB_DIR"
+    return 1
+  fi
+
+  echo "📦 Latest package detected:"
+  echo "   $DEB_FILE"
+
+  if dpkg -l cursor &>/dev/null; then
+    echo "🧹 Removing old Cursor version..."
+    sudo apt remove -y cursor || return 1
+  fi
+
+  echo "⬆️ Installing Cursor..."
+  sudo apt install -y "$DEB_FILE" || return 1
+
+  echo "🛠 Fixing dependencies..."
+  sudo apt -f install -y
+
+  echo "✅ Cursor updated successfully"
+}
+
+compress-video() {
+  if [[ -z "$1" ]]; then
+    echo "usage: compress-video <file>" >&2
+    return 1
+  fi
+  local f="$1"
+  if [[ ! -f "$f" ]]; then
+    echo "compress-video: not a file: $f" >&2
+    return 1
+  fi
+  local dir="${f:h}"
+  local base="${f:t:r}"
+  local ext="${f:e}"
+  [[ -n "$ext" ]] || ext="mp4"
+  local out="${dir}/${base}-compressed.${ext}"
+  ffmpeg -i "$f" -c:v libx265 -crf 28 "$out"
 }
