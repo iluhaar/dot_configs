@@ -151,9 +151,12 @@ build() {
 
 # === SSH Agent Setup ===
 # Start the SSH agent if it's not already running and add SSH keys
-if [ -z "$SSH_AUTH_SOCK" ]; then
-  eval "$(ssh-agent -s)"
-  ssh-add ~/work
+if ! ssh-add -l &>/dev/null; then
+  eval "$(ssh-agent -s)" >/dev/null
+fi
+
+if ! ssh-add -l | grep -q "SHA256:bweh0HZ/+kzM4bSj1TYrbtIf869kWz+mEWihVJtrBo4"; then
+  ssh-add ~/.ssh/new_work
 fi
 # === End SSH Agent Setup ===
 alias c='cursor'
