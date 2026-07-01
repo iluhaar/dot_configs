@@ -7,6 +7,7 @@ Stores personal configuration files for development tools.
 - [.zshrc](.zshrc)
 - [git/.gitconfig](git/.gitconfig)
 - [wezterm.lua](wezterm.lua)
+- [ghostty_config](ghostty_config)
 - [windows-powershell/powershell-profile.ps1](windows-powershell/powershell-profile.ps1)
 - [vscode/settings.json](vscode/settings.json)
 - [zed/settings.json](zed/settings.json)
